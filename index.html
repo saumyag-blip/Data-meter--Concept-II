@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Horizon — Focus Resilience Meter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" width="22" height="22">
+        <path d="M2 17 Q12 6 22 17" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="12" cy="12" r="2.4" fill="currentColor"/>
+      </svg>
+      <span class="brand-name">Horizon</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-item is-active" data-tab="home">
+        <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item" data-tab="session">
+        <span class="nav-label">Session</span>
+      </button>
+      <button class="nav-item" data-tab="trends">
+        <span class="nav-label">Trends</span>
+      </button>
+      <button class="nav-item" data-tab="settings">
+        <span class="nav-label">Settings</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="privacy-chip">
+        <span class="dot"></span>
+        Processed on this device
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main">
+
+    <!-- ---------- HOME ---------- -->
+    <section class="tab is-active" id="tab-home">
+      <header class="tab-head">
+        <div>
+          <p class="eyebrow">Right now</p>
+          <h1 class="tab-title">How clear is your attention</h1>
+        </div>
+        <div class="clock" id="clockReadout">—</div>
+      </header>
+
+      <div class="home-grid">
+
+        <!-- Horizon dial -->
+        <div class="panel dial-panel">
+          <svg viewBox="0 0 400 220" class="dial-svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop id="skyStopTop" offset="0%" stop-color="#E8A567"/>
+                <stop id="skyStopBottom" offset="100%" stop-color="#1B2130" stop-opacity="0"/>
+              </linearGradient>
+              <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="6" result="blur"/>
+                <feMerge>
+                  <feMergeNode in="blur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+
+            <path d="M 40 190 A 160 160 0 0 1 360 190 L 40 190 Z" fill="url(#skyGrad)" opacity="0.14"/>
+            <path d="M 40 190 A 160 160 0 0 1 360 190" fill="none" stroke="rgba(232,227,216,0.14)" stroke-width="1.5"/>
+            <path id="dialProgress" d="M 40 190 A 160 160 0 0 1 360 190" fill="none" stroke="var(--accent-dawn)" stroke-width="3" stroke-linecap="round" stroke-dasharray="503" stroke-dashoffset="503"/>
+            <line x1="16" y1="190" x2="384" y2="190" stroke="rgba(232,227,216,0.18)" stroke-width="1.5"/>
+
+            <g id="sunGroup" filter="url(#glow)">
+              <circle id="sunDot" cx="200" cy="30" r="9" fill="#E8A567"/>
+            </g>
+
+            <text x="200" y="152" text-anchor="middle" class="dial-score" id="scoreText">—</text>
+            <text x="200" y="176" text-anchor="middle" class="dial-band" id="bandText">READING</text>
+          </svg>
+          <p class="dial-caption" id="dialCaption">Calibrating from your last few sessions.</p>
+        </div>
+
+        <!-- Stat cards -->
+        <div class="stat-stack">
+          <div class="panel stat-card">
+            <p class="stat-label">Sustainable focus window</p>
+            <p class="stat-value" id="focusWindow">— min</p>
+            <p class="stat-sub">Before drift typically sets in</p>
+          </div>
+          <div class="panel stat-card">
+            <p class="stat-label">Attention debt</p>
+            <p class="stat-value" id="attentionDebt">—</p>
+            <div class="debt-track"><div class="debt-fill" id="debtFill"></div></div>
+          </div>
+          <div class="panel stat-card">
+            <p class="stat-label">Since this morning</p>
+            <div class="mini-spark"><canvas id="miniSpark" width="220" height="56"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Contributing factors -->
+        <div class="panel factors-panel">
+          <button class="factors-toggle" id="factorsToggle">
+            <span>What's shaping this score</span>
+            <svg class="chev" width="14" height="14" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <div class="factors-body" id="factorsBody">
+            <div class="factor-row">
+              <span class="factor-name">App switching</span>
+              <div class="factor-track"><div class="factor-fill" style="width:64%; background:var(--accent-alert)"></div></div>
+              <span class="factor-val">High</span>
+            </div>
+            <div class="factor-row">
+              <span class="factor-name">Screen time today</span>
+              <div class="factor-track"><div class="factor-fill" style="width:48%; background:var(--accent-dawn)"></div></div>
+              <span class="factor-val">3h 40m</span>
+            </div>
+            <div class="factor-row">
+              <span class="factor-name">Sleep debt</span>
+              <div class="factor-track"><div class="factor-fill" style="width:30%; background:var(--accent-good)"></div></div>
+              <span class="factor-val">Low</span>
+            </div>
+            <div class="factor-row">
+              <span class="factor-name">Time of day</span>
+              <div class="factor-track"><div class="factor-fill" style="width:70%; background:var(--accent-good)"></div></div>
+              <span class="factor-val">Favorable</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Intervention prompt -->
+        <div class="panel prompt-panel" id="promptPanel">
+          <div class="prompt-text">
+            <p class="prompt-title" id="promptTitle">Your window looks short right now</p>
+            <p class="prompt-body" id="promptBody">A short protected block can steady things before you take on something demanding.</p>
+          </div>
+          <button class="btn btn-primary" id="promptAction">Start a 12-minute block</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------- SESSION ---------- -->
+    <section class="tab" id="tab-session">
+      <header class="tab-head">
+        <div>
+          <p class="eyebrow">Deep work</p>
+          <h1 class="tab-title">Protected session</h1>
+        </div>
+      </header>
+
+      <div class="session-grid">
+        <div class="panel session-panel">
+          <p class="session-quiet">Horizon stays quiet during a session — it only speaks up if drift is detected.</p>
+          <div class="session-timer" id="sessionTimer">00:00</div>
+          <div class="session-controls">
+            <button class="btn btn-primary" id="sessionStart">Start session</button>
+            <select class="session-length" id="sessionLength">
+              <option value="12">12 min</option>
+              <option value="18" selected>18 min</option>
+              <option value="25">25 min</option>
+              <option value="45">45 min</option>
+            </select>
+          </div>
+          <div class="session-chart"><canvas id="sessionCanvas" width="640" height="140"></canvas></div>
+        </div>
+
+        <div class="panel drift-panel" id="driftPanel" hidden>
+          <p class="drift-title">Attention seems to be drifting</p>
+          <p class="drift-body">That's normal partway through a block. Want a two-minute reset, or keep going?</p>
+          <div class="drift-actions">
+            <button class="btn btn-ghost" id="driftDismiss">Keep going</button>
+            <button class="btn btn-primary" id="driftReset">Take a reset</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- TRENDS ---------- -->
+    <section class="tab" id="tab-trends">
+      <header class="tab-head">
+        <div>
+          <p class="eyebrow">Last 7 days</p>
+          <h1 class="tab-title">How your focus is trending</h1>
+        </div>
+      </header>
+
+      <div class="trends-grid">
+        <div class="panel trends-chart-panel">
+          <canvas id="trendsCanvas" width="720" height="220"></canvas>
+        </div>
+        <div class="panel insights-panel">
+          <p class="insights-title">Patterns worth noticing</p>
+          <ul class="insights-list" id="insightsList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SETTINGS ---------- -->
+    <section class="tab" id="tab-settings">
+      <header class="tab-head">
+        <div>
+          <p class="eyebrow">Calibration & data</p>
+          <h1 class="tab-title">Tune how Horizon reads you</h1>
+        </div>
+      </header>
+
+      <div class="settings-grid">
+
+        <div class="panel probe-panel">
+          <p class="panel-title">Attention probe</p>
+          <p class="panel-desc">A short, five-round tap test. It sharpens how accurately your focus window is estimated — nothing else.</p>
+          <div class="probe-stage" id="probeStage">
+            <button class="btn btn-primary" id="probeStart">Run 45-second probe</button>
+          </div>
+          <p class="probe-result" id="probeResult"></p>
+        </div>
+
+        <div class="panel sources-panel">
+          <p class="panel-title">Data sources</p>
+          <p class="panel-desc">Everything below is processed on this device only. Nothing raw leaves your phone or laptop.</p>
+
+          <div class="toggle-row">
+            <div>
+              <p class="toggle-name">Screen time & app switching</p>
+              <p class="toggle-sub">Core signal — used for every score</p>
+            </div>
+            <label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <p class="toggle-name">Notification activity</p>
+              <p class="toggle-sub">Frequency of interruptions</p>
+            </div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <p class="toggle-name">Wearable — HRV & movement</p>
+              <p class="toggle-sub">Improves accuracy of attention debt</p>
+            </div>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+          <div class="toggle-row">
+            <div>
+              <p class="toggle-name">Camera cues (opt-in)</p>
+              <p class="toggle-sub">Blink rate and head-pose stability during sessions</p>
+            </div>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div class="panel tone-panel">
+          <p class="panel-title">Coach tone</p>
+          <p class="panel-desc">How Horizon talks to you when it speaks up.</p>
+          <div class="tone-options">
+            <button class="tone-pill is-active" data-tone="encouraging">Encouraging</button>
+            <button class="tone-pill" data-tone="neutral">Neutral</button>
+            <button class="tone-pill" data-tone="minimal">Minimal — numbers only</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
