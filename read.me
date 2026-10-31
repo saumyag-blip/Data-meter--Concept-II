@@ -1,0 +1,29 @@
+# Horizon — Focus Resilience Meter
+
+A dashboard prototype for the "Attention Span & Focus Resilience Meter" concept: a horizon-line dial where the sun's position stands in for current focus quality, plus a session mode, weekly trends, and a calibration probe.
+
+## Run it
+
+No build step — plain HTML/CSS/JS.
+
+1. Open this folder in VS Code.
+2. Install the **Live Server** extension (if you don't have it).
+3. Right-click `index.html` → **Open with Live Server**.
+
+Or just double-click `index.html` to open it directly in a browser.
+
+## Files
+
+- `index.html` — structure for all four screens (Home, Session, Trends, Settings)
+- `style.css` — design tokens (colors, type, spacing) and layout
+- `app.js` — dial rendering, simulated live data, session timer, trends chart, attention probe
+
+## Where the real data would plug in
+
+Everything is currently simulated with `Math.random()` so the UI has believable numbers to show. To wire it to real signals, replace:
+
+- `currentScore` random walk → your actual focus-quality model output
+- `dayScores` in the Trends tab → aggregated daily scores from stored sessions
+- the attention probe's reaction-time capture → feed its output into your calibration model instead of just displaying the average
+
+The layout assumes on-device processing (see the sources panel in Settings) — nothing here calls an external API.
